@@ -1,0 +1,148 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang2057{\fonttbl{\f0\fnil\fcharset0 Calibri;}{\f1\fnil Calibri;}}
+{\colortbl ;\red0\green0\blue255;}
+{\*\generator Riched20 10.0.22621}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\f0\fs22\lang9 DUCKDB PARQUET EXTENSION USER GUIDE\par
+March 24, 2025\par
+For non-developers using the extension in Qlik Cloud\par
+1. Introduction\par
+The DuckDB Parquet Extension lets you bring public Parquet, CSV, or JSON files into Qlik Cloud, explore them with a powerful in-browser SQL engine (DuckDB), and view the results in an interactive table. It\rquote s designed to make data exploration easy and fast, with features like filtering, pivoting, and custom queries\f1\emdash all without needing to write code.\par
+Key Features\par
+Load data from public Parquet, CSV, or JSON files using a URL.  \par
+Filter data with Qlik selections or a search box.  \par
+Create pivot tables to summarize data (like Excel PivotTables).  \par
+Run your own SQL queries directly in the search box.  \par
+Paginate results and set how many rows to show.  \par
+Refresh data instantly with a \ldblquote Refresh Data\rdblquote  button.  \par
+See stats like total records, filtered records, and unmatched records.  \par
+Customize the look of the table (colors, borders, etc.) in the properties panel.  \par
+Dedicated to Stuart Wannop, a Qlik Champion, with editable footer text.\par
+\par
+2. Installation\par
+Get the Extension:  \par
+Ask your administrator for the extension ZIP file or download it from where it\rquote s shared (e.g., a repository or email).\par
+Upload to Qlik Cloud:  \par
+Log in to Qlik Cloud.  \par
+Go to the Management Console (usually under your profile or settings).  \par
+Find Extensions, click Add, and upload the ZIP file.\par
+\par
+Add to a Sheet:  \par
+Open a Qlik app and go to a sheet.  \par
+Click Edit Sheet.  \par
+In the left panel, under Custom Objects, find \ldblquote DuckDB Parquet Extension.\rdblquote   \par
+Drag it onto your sheet.\par
+\par
+3. Configuration\par
+Set up the extension using the Properties Panel on the right side of Qlik Cloud when editing a sheet. Here\rquote s what you can adjust:\par
+3.1 Data Source\par
+Data Files:  \par
+Click Add to enter a file.  \par
+F\f0\lang2057 i\f1\lang9 le URL: Paste the full URL to your public file (e.g., {{\field{\*\fldinst{HYPERLINK https://example.com/data.parquet }}{\fldrslt{https://example.com/data.parquet\ul0\cf0}}}}\f1\fs22 ).  \par
+File Type: Pick Parquet, CSV, JSON, or Arrow from the dropdown (default: Parquet).  \par
+File Name (optional): Give the file a name, or leave blank to use the URL\rquote s name.  \par
+Add more files if needed by clicking Add again.\par
+\par
+Show Filtered Record Count: Check this box to show how many records match your filters (default: On).\par
+\par
+3.2 Pagination\par
+Rows per Page: Choose how many rows to show per page (default: 25).\par
+\par
+3.3 Settings\par
+Query Timeout (ms): How long the extension waits for data (default: 60000 ms = 1 minute).  \par
+Max RAM (GB): Set memory for processing (default: 4 GB).  \par
+Max Pivot Fields: How many columns you can pivot (default: 3).  \par
+Sort Scope: Choose \ldblquote Selected Records\rdblquote  (sorts only what\rquote s shown) or \ldblquote Entire Table\rdblquote  (sorts all data, default: Selected Records).\par
+\par
+3.4 Styles\par
+Make the table look how you want:  \par
+Container Padding: Space around the table (default: 10px).  \par
+K\f0\lang2057 P\f1\lang9 I Margin Bottom: Space below stats (default: 10px).  \par
+KPI Font Weight: Boldness of stats text (default: bold).  \par
+KPI Color: Color of stats text (default: #333, a dark gray).  \par
+Table Max Height: How tall the table can get (default: 600px).  \par
+Table Max Width: How wide the table can be (default: 100%).  \par
+Table Border: Line around the table (default: 1px solid #ccc).  \par
+Header Border: Line around table headers (default: 1px solid black).  \par
+Header Padding: Space inside headers (default: 8px).  \par
+Header Background: Header color (default: #f5f5f5, light gray).  \par
+Cell Border: Line around cells (default: 1px solid black).  \par
+Cell Padding: Space inside cells (default: 8px).  \par
+Button Margin Top: Space above buttons (default: 10px).  \par
+Button Border: Line around buttons (default: 1px solid black).  \par
+Bold First Pivot Count: Check to make the first pivot count bold (default: On).\par
+\par
+3.5 Field Mappings\par
+Connect Qlik fields to your file\rquote s columns for filtering:  \par
+Click Add Mapping.  \par
+Qlik Field Name: Type a field name from your Qlik app (e.g., \ldblquote Region\rdblquote ).  \par
+Data Column Name: Type the matching column name from your file (e.g., \ldblquote region_name\rdblquote ).  \par
+Add more mappings as needed.\par
+\par
+3.6 Copyright & Dedication\par
+Edit the text at the bottom of the table:  \par
+Tribute: Default: \ldblquote This Qlik Extension is shared in memory of Stuart Wannop.\rdblquote   \par
+Description: Default: \ldblquote A Qlik Champion who would have enjoyed seeing this type of embedded object.\rdblquote   \par
+Disclaimer: Default: \ldblquote Use of this extension is entirely at your own risk; no warranties are implied or inferred.\rdblquote\par
+\par
+4. Usage\par
+Add the Extension: Drag it onto a sheet in your Qlik app.  \par
+Set It Up: Fill in the properties (at least the file URL and any field mappings).  \par
+Interact with It:  \par
+Refresh Data Button: Click to reload the latest data from your file.  \par
+Add Pivot Button: Click to add a column for pivoting (like grouping in Excel). Pick a column from the dropdown.  \par
+Clear Button: Click to reset pivots and searches.  \par
+Search Box:  \par
+Type a word and press Enter to search mapped columns.  \par
+Or type a SQL query (e.g., SELECT * FROM all_data WHERE sales > 100) and press Enter to run it.\par
+Table Headers: Click a header to sort (click again to reverse).  \par
+Next/Back Buttons: Move through pages of results (only shown without pivots).  \par
+Qlik Selections: Select values in mapped Qlik fields to filter the table.\par
+View Results:  \par
+See stats like \ldblquote Total Records\rdblquote  and \ldblquote Last Refreshed\rdblquote  at the top.  \par
+If filtered, see \ldblquote Selected Records\rdblquote  and \ldblquote Unmatched Records\rdblquote  too.  \par
+The table shows your data, with pivot views if you added them.\par
+\par
+5. Troubleshooting\par
+\ldblquote Error loading data\rdblquote  Message:  \par
+Check your file URL is correct and works in a browser.  \par
+Make sure it\rquote s a valid Parquet, CSV, or JSON file.  \par
+Ensure the URL is public (no login needed).\par
+Table Not Showing:  \par
+Verify field mappings match your file\rquote s column names (they\rquote re case-sensitive).  \par
+Check if the file has data\emdash empty files show \ldblquote No matching records found.\rdblquote\par
+\par
+Slow Loading:  \par
+Lower the \ldblquote Rows per Page\rdblquote  in the properties.  \par
+Use a smaller file if possible.\par
+Pivot Not Working:  \par
+Ensure you picked a column from the dropdown after clicking \ldblquote Add Pivot.\rdblquote   \par
+Check your file has data for that column.\par
+Need Help?: Ask your administrator to check the browser console (F12 > Console tab) for error messages.\par
+\par
+6. Tips for Non-Developers\par
+Try Simple SQL: If you want to experiment, type something like SELECT column_name FROM all_data in the search box to see just that column.  \par
+\par
+Pivot Like Excel: Use \ldblquote Add Pivot\rdblquote  to group data (e.g., by region, then by year) and see counts automatically.  \par
+Refresh Often: If your file updates, hit \ldblquote Refresh Data\rdblquote  to get the latest version.  \par
+Keep It Simple: Start with one file and a few mappings to get comfortable.\par
+\par
+7. Technical Notes\par
+What It Uses:  \par
+\f0\lang2057 D\f1\lang9 uckDB WASM: A fast tool that runs SQL in your browser.  \par
+Apache Arrow: Helps process data quickly.\par
+Browser Support: Works in Chrome, Edge, Firefox, and Safari (needs WebAssembly, which they all have).  \par
+Safety: Only use URLs you trust, as the data loads in your browser.\par
+\par
+8. Copyright\f0\lang2057  (feel free to change)\f1\lang9\par
+Shown at the bottom of the table (editable in properties):\par
+\ldblquote This Qlik Extension is shared in memory of Stuart Wannop, A Qlik Champion who would have enjoyed seeing this type of embedded object. Built with DuckDB WASM and Apache Arrow. Use of this extension is entirely at your own risk; no warranties are implied or inferred.\rdblquote\par
+Notes on Changes (March 24, 2025)\par
+Date: Updated to March 24, 2025, to match today.  \par
+Features: Added pivot tables, SQL queries, and multi-file support (Parquet, CSV, JSON).  \par
+Buttons: Changed \ldblquote Live\rdblquote  to \ldblquote Refresh Data,\rdblquote  added \ldblquote Add Pivot\rdblquote  and \ldblquote Clear.\rdblquote   \par
+Settings: New options like Max RAM, Max Pivot Fields, and Sort Scope.  \par
+Styles: Expanded with bold pivot counts and more customization.  \par
+Troubleshooting: Updated for new features and simplified for non-technical users.  \par
+Tips: Added to help non-developers get started easily.\par
+This guide is designed to be approachable, with step-by-step instructions and no technical jargon where possible\f0\par
+}
+ 

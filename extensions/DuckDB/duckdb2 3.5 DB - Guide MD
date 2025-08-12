@@ -1,0 +1,319 @@
+# DUCKDB PARQUET EXTENSION USER GUIDE, March 29, 2025
+
+## For Non-Developers Using the Extension in Qlik Cloud
+
+**March 29, 2025**
+
+---
+
+## 1. Introduction
+
+The **DuckDB Parquet Extension** enables Qlik Cloud users to connect to public Parquet files, query them using DuckDB’s in-browser SQL engine, and display the results in an interactive, paginated table. This extension seamlessly integrates Qlik’s selection capabilities with DuckDB’s high-performance data processing, providing a fast and user-friendly way to explore data directly in your browser.
+
+### Key Features
+- **Load and Query Parquet Files**: Connect to publicly accessible Parquet files via URL and query them using DuckDB’s SQL engine.
+- **Interactive Filtering**: Filter data using Qlik field selections, a manual search box, or custom SQL queries.
+- **Paginated Table**: Display results with customizable row counts and pagination controls.
+- **Pivot Tables**: Group data by multiple fields with collapsible levels for hierarchical analysis.
+- **Sorting**: Sort data by columns, either across the entire table or within the current selection.
+- **Column Statistics**: Analyze data quality with a "Stats" button to view metrics like null counts, unique values, and outliers.
+- **Refresh Data**: Use the "Refresh Data" button to reload data from the Parquet file on demand.
+- **KPIs**: Display key metrics such as total records, matched records, and unmatched records.
+- **Customizable Appearance**: Adjust table styles, layout, and messages via the properties panel.
+- **Theme Integration**: Automatically applies Qlik Sense’s theme for a consistent look and feel.
+- **Accessibility**: Includes ARIA attributes (e.g., `aria-live`, `aria-label`) for better screen reader support.
+- **Dedicated to Stuart Wannop**: A tribute to a Qlik Champion, with editable copyright and dedication text.
+
+This extension has been professionally developed with rigorous Qlik verifications, security checks, and user-friendly controls to ensure reliability and performance.
+
+---
+
+## 2. Installation
+
+### Download the Extension
+- Obtain the extension ZIP file from your administrator or the source repository. The ZIP file includes the `duckdb2.js` script, `duckdb2.qext` configuration file, and required dependencies (e.g., DuckDB WASM and Apache Arrow libraries).
+
+### Upload to Qlik Cloud
+1. Log in to Qlik Cloud.
+2. Navigate to the **Management Console** > **Extensions** section.
+3. Click **Add**, then upload the ZIP file.
+4. Verify that the extension appears in the list as "DuckDB Parquet Extension."
+
+### Add to a Sheet
+1. Open a Qlik app in Qlik Cloud.
+2. Edit a sheet and locate the **Custom Objects** panel.
+3. Drag the **DuckDB Parquet Extension** onto the sheet.
+
+---
+
+## 3. Configuration
+
+Configure the extension using the properties panel in Qlik Cloud. Below are the available sections and options, updated to reflect the latest features and controls.
+
+### 3.1 Data Source
+- **Data Files**:
+  - **File URL**: Enter the full URL to a publicly accessible file (e.g., `https://example.com/data.parquet`). Supports Parquet, CSV, JSON, and Arrow formats.
+  - **File Type**: Select the file type (Parquet, CSV, JSON, or Arrow) from the dropdown.
+  - **File Name (optional)**: Specify a custom name for the file. If blank, it’s derived from the URL.
+  - **Add Multiple Files**: Click "Add" to include additional files; the extension will union them into a single dataset.
+- **Show Filtered Record Count**: Toggle to display counts of matched and unmatched records based on Qlik selections (default: On).
+
+### 3.2 Dependencies
+- **DuckDB WASM URL**: URL to the DuckDB WASM file (e.g., `https://cdn.jsdelivr.net/npm/duckdb-wasm@1.0.0/dist/duckdb.wasm`). Must start with `https://`.
+- **DuckDB Worker URL**: URL to the DuckDB Worker script (e.g., `https://cdn.jsdelivr.net/npm/duckdb-wasm@1.0.0/dist/duckdb-browser.worker.js`). Must start with `https://`.
+- **Arrow JS URL**: URL to the Apache Arrow library (e.g., `https://cdn.jsdelivr.net/npm/apache-arrow@12.0.0/arrow.min.js`). Must start with `https://`.
+- **Security Note**: The extension validates that all URLs use `https://` to ensure secure connections. Missing or invalid URLs will display an error message: "Error: Missing DuckDB or Arrow library URLs. Please configure them in the Dependencies section."
+
+### 3.3 Settings
+- **Query Timeout (ms)**: Set the maximum time for queries to run (default: 60,000 ms; range: 1,000–120,000 ms). Prevents long-running queries from hanging.
+- **Max RAM (GB)**: Limit the memory DuckDB can use (default: 4 GB; range: 1–32 GB). Files exceeding this limit trigger a confirmation prompt.
+- **Enable Debug Logging**: Toggle to enable detailed console logs for troubleshooting (default: Off). Recommended for administrators only.
+- **Max Pivot Fields**: Set the maximum number of pivot fields (default: 3; range: 1–10).
+- **Max Custom Query Rows**: Limit the number of rows returned by custom SQL queries (default: 0, meaning no limit).
+- **Sort Scope**: Choose whether sorting applies to the entire table or only selected records (default: Selected Records).
+- **Loading Message**: Customize the message shown during data loading (default: "Enjoy this extension. During data load Take a moment to reflect whilst your data loads.").
+
+### 3.4 Pagination
+- **Rows per Page**: Set the default number of rows per table page (default: 25).
+- **Note**: Pagination is disabled when using pivot tables.
+
+### 3.5 Appearance
+- **General**:
+  - **Show Titles**: Toggle to enable Qlik Sense’s native rendering of the title, subtitle, and footnote (default: On). When enabled, these are displayed outside the extension object.
+  - **Title**: Set the title (default: "Data Explorer"). Supports Qlik expressions (e.g., `=Count(Distinct Region)`).
+  - **Subtitle**: Set the subtitle (default: blank). Supports Qlik expressions.
+  - **Footnote**: Set the footnote (default: blank). Supports Qlik expressions.
+- **Styles**:
+  - **Container Padding**: Padding around the table (default: 10px).
+  - **KPI Margin Bottom**: Space below KPI stats (default: 10px).
+  - **KPI Font Weight**: Font weight for KPIs (default: bold).
+  - **KPI Color**: Text color for KPIs (default: #333).
+  - **Table Max Height**: Maximum table height (default: 600px).
+  - **Table Max Width**: Maximum table width (default: 100%).
+  - **Table Border**: Border style for the table (default: 1px solid #ccc).
+  - **Header Border**: Border for table headers (default: 1px solid black).
+  - **Header Padding**: Padding for headers (default: 8px).
+  - **Header Background**: Background color for headers (default: #f5f5f5).
+  - **Cell Border**: Border for table cells (default: 1px solid black).
+  - **Cell Padding**: Padding for cells (default: 8px).
+  - **Button Margin Top**: Space above pagination buttons (default: 10px).
+  - **Button Border**: Border style for buttons (default: 1px solid black).
+  - **Bold First Pivot Count**: Toggle to bold the count column in single-level pivot tables (default: On).
+
+### 3.6 Field Mappings
+- **Qlik Field Name**: The field name in your Qlik app (e.g., `Region`).
+- **Data Column Name**: The corresponding column in the file (e.g., `region_name`). Case-sensitive.
+- **Add Multiple Mappings**: Click "Add Mapping" to link additional fields. If no mappings are defined, a warning appears: "No Qlik field mappings defined—running as standalone query tool."
+
+### 3.7 Search Settings
+- **Search Placeholder**: Text shown in the search box (default: "Search or enter SQL query").
+
+### 3.8 Copyright & Dedication
+- **Tribute**: Dedication message (default: "This Qlik Extension is shared in memory of Stuart Wannop").
+- **Description**: Additional context (default: "A Qlik Champion who would have enjoyed seeing this type of embedded object").
+- **Disclaimer**: Legal note (default: "Use of this extension is entirely at your own risk; no warranties are implied or inferred").
+- **Note**: This section is displayed at the bottom of the extension, below the table.
+
+---
+
+## 4. Usage
+
+### Add the Extension
+1. Drag the **DuckDB Parquet Extension** onto a sheet in your Qlik app.
+2. Resize the object as needed to fit your layout.
+
+### Configure
+1. In the properties panel, enter the file URL under **Data Source** (e.g., `https://example.com/data.parquet`).
+2. Set the file type (e.g., Parquet, CSV, JSON, or Arrow).
+3. Add field mappings to link Qlik fields to file columns (e.g., Qlik field `Region` to Parquet column `region_name`).
+4. Adjust settings like rows per page, styles, and query timeout as needed.
+
+### Interact
+- **Refresh Data Button**: Click to reload data from the file. The button temporarily changes to "Refreshing..." during the operation.
+- **Search Box**:
+  - Type a search term and press Enter to filter across mapped fields (e.g., "West" to filter rows containing "West").
+  - Alternatively, enter a SQL query (e.g., `SELECT * FROM all_data WHERE region_name = 'West'`) and press Enter to execute it.
+- **Pivot Tables**:
+  - Click "Add Pivot" to group data by a field (e.g., `region_name`).
+  - Add up to the maximum pivot fields (default: 3) to create a hierarchical view.
+  - Click the ▶/▼ icons to expand or collapse levels.
+- **Sorting**:
+  - Click a column header to sort by that column.
+  - Click again to toggle between ascending and descending order.
+  - Sorting scope (entire table or selected records) is set in the properties panel.
+- **Stats Button**:
+  - Select "All Columns" or a specific column from the dropdown and click "Stats" to view data quality metrics (e.g., null count, unique values, min/max, outliers for numeric columns).
+- **Pagination**:
+  - Use the "Back" and "Next" buttons to navigate through pages of results.
+  - Pagination is disabled when using pivot tables.
+- **Qlik Selections**:
+  - Select values in mapped Qlik fields (e.g., select "West" in the `Region` field) to filter the table.
+  - KPIs update to show matched and unmatched record counts.
+- **View Results**:
+  - The table displays the data with KPIs above it (e.g., Total Records, Last Refreshed, Matched Records, Unmatched Records).
+  - Columns with active Qlik selections are bolded and underlined.
+
+---
+
+## 5. Professional Development and Verifications
+
+This extension has been developed with a focus on reliability, security, and user experience. Below are the key verifications and controls implemented to ensure professional quality.
+
+### 5.1 Qlik Verifications and Updates
+- **Syntax Validation**:
+  - The `duckdb2.js` script was validated using ESLint to ensure no syntax errors. A specific issue in the `initDuckDB` function (`CREATE OR REMOVE TABLE` was corrected to `CREATE OR REPLACE TABLE`) was fixed.
+- **Loading Message Fix**:
+  - Addressed a flash of the "data loading" message after clicking the "Refresh Data" button by introducing a `justRefreshed` flag. This ensures the message only appears when necessary, improving the user experience.
+- **Compatibility**:
+  - Tested with Qlik Sense versions up to March 2025. The extension uses modern JavaScript features (`Promise`, `async/await`, `fetch`) supported in recent Qlik Sense releases. For older versions (pre-2018), compatibility adjustments may be needed.
+- **Error Handling**:
+  - Added detailed error messages for common issues (e.g., "Error: Missing DuckDB or Arrow library URLs," "No valid files could be loaded," "File type mismatch").
+  - Historical Qlik Community issues (e.g., 442 error in QlikView 11 SR1) were reviewed, and similar issues in Qlik Sense were mitigated through proper extension loading checks.
+
+### 5.2 Security Checks and Controls
+- **URL Validation**:
+  - All dependency URLs (DuckDB WASM, Worker, Arrow JS) must start with `https://` to ensure secure connections. Invalid URLs trigger an error: "Error: Missing DuckDB or Arrow library URLs."
+- **File Type Validation**:
+  - The extension checks if the declared file type (e.g., Parquet) matches the URL extension (e.g., `.parquet`). Mismatches result in an error: "File type mismatch: [file URL] (declared as [type], appears to be [inferred type])."
+- **File Size Limits**:
+  - Files exceeding the Max RAM setting (default: 4 GB) trigger a confirmation prompt: "File size ([size] MB) exceeds RAM limit ([maxRam] GB). Continue loading [file URL]?"
+  - Skipped files are listed in a warning: "Warning: Skipped [count] file(s) due to size exceeding [maxRam]GB: [file names]."
+- **Network and CORS Checks**:
+  - The extension performs a `HEAD` request to verify file accessibility before loading. Failed requests result in a warning: "Skipped [file URL] (HEAD failed)."
+  - Fetch failures (e.g., due to CORS or network issues) display an error: "Error: Failed to fetch file [file URL]. Check the URL or network."
+- **Query Timeout**:
+  - A configurable query timeout (default: 60,000 ms) prevents long-running queries from hanging the browser. Timeout errors display as: "[File type] load timeout for [file name]."
+- **Trusted Sources**:
+  - Only use trusted file URLs, as data is processed in the browser. The extension does not execute server-side code, reducing server-side security risks.
+
+### 5.3 Performance Controls
+- **Max RAM Setting**: Limits memory usage to prevent browser crashes (default: 4 GB).
+- **Max Query Rows**: Caps the number of rows returned by custom SQL queries to avoid performance issues (default: 0, meaning no limit).
+- **Pagination**: Reduces rendering load by displaying data in pages (default: 25 rows per page).
+- **Debug Logging**: Optional debug logs provide detailed timing and error information for administrators (e.g., "Total load time: [time]ms").
+
+### 5.4 Warning and Error Messages
+- **Missing Dependencies**: "Error: Missing DuckDB or Arrow library URLs. Please configure them in the Dependencies section."
+- **No Files Selected**: "Please select at least one file to display in the Data Source section."
+- **No Valid Files Loaded**: "No valid files could be loaded. Check file URLs and permissions."
+- **File Type Mismatch**: "Error: File type mismatch: [file URL] (declared as [type], appears to be [inferred type])."
+- **Fetch Failure**: "Error: Failed to fetch file [file URL]. Check the URL or network."
+- **No Mappings**: "No Qlik field mappings defined—running as standalone query tool."
+- **Skipped Files**: "Warning: Skipped [count] file(s) due to size exceeding [maxRam]GB: [file names]."
+- **SQL Errors**: "SQL Error: [error message]" (displayed in the table when a custom SQL query fails).
+
+---
+
+## 6. Troubleshooting
+
+### "Error Loading Data" Message
+- **Check the File URL**:
+  - Ensure the URL is correct and publicly accessible (e.g., test in a browser or with `curl`).
+  - Verify the URL uses `https://` and returns a valid file.
+- **CORS Issues**:
+  - Confirm the server hosting the file allows CORS access from Qlik Cloud. Contact your administrator to adjust CORS headers if needed.
+- **Network Issues**:
+  - Check your internet connection. Open the browser’s developer console (F12) and look for failed network requests in the "Network" tab.
+
+### Table Not Showing
+- **Field Mappings**:
+  - Ensure field mappings match the file’s column names (case-sensitive).
+  - If no mappings are defined, the extension runs in standalone mode, and a warning appears: "No Qlik field mappings defined—running as standalone query tool."
+- **Empty File**:
+  - Verify the file contains data. Empty files display: "No matching records found."
+- **File Type Mismatch**:
+  - Check for a "File type mismatch" error in the extension. Correct the file type in the properties panel to match the URL extension.
+
+### Slow Performance
+- **Reduce Rows per Page**:
+  - Lower the "Rows per Page" setting (e.g., from 25 to 10) for faster rendering.
+- **Use Smaller Files**:
+  - If possible, use a smaller file to reduce memory usage.
+- **Adjust Max RAM**:
+  - Increase the "Max RAM" setting if your browser can handle more memory (e.g., from 4 GB to 8 GB).
+- **Query Timeout**:
+  - If queries time out, increase the "Query Timeout" setting (e.g., from 60,000 ms to 90,000 ms).
+
+### Duplicate Title/Subtitle/Footnote
+- This issue was fixed in the March 29, 2025 update. The extension now uses Qlik Sense’s native rendering for the title, subtitle, and footnote (controlled by the "Show Titles" property). Ensure "Show Titles" is enabled to display these elements outside the object.
+
+### "Data Loading" Message Flashing
+- This issue was resolved in the March 29, 2025 update. The "Refresh Data" button now prevents the loading message from flashing by caching the data and skipping unnecessary reloads.
+
+### Console Logs
+- **Normal Operation**: Minimal logs are shown unless "Enable Debug Logging" is turned on. You may see warnings or errors if issues occur (e.g., "Fetch failed: [error]").
+- **Debug Mode**: When enabled, detailed logs provide timing and error information (e.g., "Total load time: [time]ms"). Contact your administrator to review these logs if needed.
+
+### Extension Not Loading (442 Error)
+- This issue was fixed in the March 29, 2025 update. A syntax error in the `duckdb2.qext` file was corrected, ensuring the extension loads properly. If the error persists:
+  - Verify the extension was uploaded correctly in the Qlik Management Console.
+  - Check the Qlik Sense server logs for more details (e.g., `C:\ProgramData\Qlik\Sense\Log\Engine`).
+
+---
+
+## 7. Technical Notes
+
+### Dependencies
+- **DuckDB WASM**: Embedded SQL engine for querying files in the browser. Provides high-performance data processing.
+- **Apache Arrow**: Data format for efficient in-memory processing, enabling fast data transfers and queries.
+
+### Browser Support
+- Works in modern browsers (Chrome, Edge, Firefox, Safari, Opera) with WebAssembly support. Ensure your browser is up to date for the best experience.
+
+### Security
+- **Trusted Sources**: Only use trusted file URLs, as data is processed in the browser. The extension does not execute server-side code.
+- **HTTPS Enforcement**: All dependency URLs must use `https://` to ensure secure connections.
+- **CORS**: Files must be hosted on servers that allow CORS access from Qlik Cloud.
+
+### Performance
+- The extension uses DuckDB’s in-browser processing, which is memory-intensive for large files. Adjust the "Max RAM" and "Rows per Page" settings to optimize performance.
+
+### Browser Performance Hints
+The DuckDB Parquet Extension relies on WebAssembly, in-memory processing, and JavaScript execution, which can be resource-intensive. Below are browser-specific tips to maximize performance in Microsoft Edge, Google Chrome, and Opera.
+
+#### Microsoft Edge
+- **Enable Hardware Acceleration**:
+  - Go to `Settings` > `System and performance`.
+  - Ensure "Use hardware acceleration when available" is turned on. This leverages your GPU for faster WebAssembly and rendering performance.
+  - Restart Edge after enabling.
+- **Optimize Memory Usage**:
+  - Open `edge://flags` in the address bar.
+  - Search for "Memory Saver" and enable it. This frees up memory from inactive tabs, ensuring more resources are available for the extension.
+  - Restart Edge to apply the change.
+- **Disable Unnecessary Extensions**:
+  - Go to `Settings` > `Extensions`.
+  - Disable or remove extensions that consume significant CPU or memory (e.g., ad blockers, video downloaders), as they can interfere with DuckDB’s processing.
+- **Enable Performance Mode**:
+  - Go to `Settings` > `System and performance`.
+  - Turn on "Efficiency mode" to reduce CPU usage, but if performance is still slow, switch to "Performance" mode (available in Edge versions 112+).
+- **Clear Cache Regularly**:
+  - Go to `Settings` > `Privacy, search, and services` > `Choose what to clear` under "Clear browsing data."
+  - Select "Cached images and files" and clear. A large cache can slow down JavaScript execution.
+
+#### Google Chrome
+- **Enable Hardware Acceleration**:
+  - Go to `Settings` > `System`.
+  - Ensure "Use hardware acceleration when available" is enabled. This improves WebAssembly performance and table rendering.
+  - Restart Chrome after enabling.
+- **Use Memory Saver**:
+  - Go to `Settings` > `Performance`.
+  - Enable "Memory Saver" to free up memory from inactive tabs, ensuring DuckDB has enough resources for in-memory processing.
+  - Set to "High" for maximum memory efficiency.
+- **Optimize JavaScript Execution**:
+  - Open `chrome://flags` in the address bar.
+  - Search for "JavaScript" and enable "JavaScript compiler optimizations" (if available). This can speed up the extension’s JavaScript-heavy operations.
+  - Restart Chrome to apply the change.
+- **Disable Resource-Heavy Extensions**:
+  - Go to `Settings` > `Extensions`.
+  - Disable extensions that use significant CPU or memory (e.g., script blockers, VPNs), as they can slow down WebAssembly and JavaScript execution.
+- **Enable Preload Pages**:
+  - Go to `Settings` > `Privacy and security` > `Cookies and other site data`.
+  - Turn on "Preload pages for faster browsing and searching." This can speed up file fetching and dependency loading.
+- **Clear Cache and Reduce Memory Footprint**:
+  - Go to `Settings` > `Privacy and security` > `Clear browsing data`.
+  - Select "Cached images and files" and clear. A bloated cache can impact performance.
+
+#### Opera
+- **Enable Hardware Acceleration**:
+  - Go to `Settings` (or `opera://settings`).
+  - Scroll to `System` and ensure "Use hardware acceleration when available" is enabled. This optimizes WebAssembly and rendering performance.
